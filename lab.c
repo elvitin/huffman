@@ -1,40 +1,24 @@
-
 #include <stdio.h>
-#include <stdbool.h>
-#include <string.h>
 
-#define ASCII_RANGE 256
-
-typedef struct arvh
+void funcTest(int *x)
 {
-	struct arvh *esq;
-	char				 chr;
-	int					 frq;
-	struct arvh *dir;
+	printf("(&x) Endereco de x na chamada (%d): [%p]\n",*x, &x);
+	printf("(&a) Seu valor x: [%p]\n", x);
+	printf("(*x) Oque seu valor guarda: [%d]\n\n", *x);
 
-} *Arvh;
-
-
-char *freq (void)
-{
-	//ASCII_RANGE
-
-	static char *str = {"Vic"};
-
-	printf("[%s]\n", str);
-
-	return str;
+	if (*x < 5)
+	{
+		(*x)++;
+		funcTest(x);
+	}
 }
 
 
 int main (void)
 {
-	/*
-	for (int i = 0; i < ASCII_RANGE; i++)
-		printf("%c\n", i);
-	*/
-
-	printf("texto%ctexto\n", 11);
-	//printf("texto\ttexto\n");
+	int a = 1;
+	
+	printf("(main) &a: [%p]\n\n", &a);
+	funcTest(&a);
 	return 0;
 }
