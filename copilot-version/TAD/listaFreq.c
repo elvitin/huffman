@@ -65,6 +65,24 @@ int getIndex(struct tabela_frequencia *lista, char p[])
 	return i;
 }
 
+
+
+Tupla *getFromIndex(struct tabela_frequencia *lista, int i)
+{
+	Tupla *aux = lista;
+	while (aux != NULL && i > 0)
+	{
+		aux = aux->prox;
+		i--;
+	}
+	
+	if (aux == NULL)
+		return NULL;
+	return aux;
+}
+
+
+
 /*
 int getFreq(freq *lista, char *p)
 {
@@ -75,22 +93,5 @@ int getFreq(freq *lista, char *p)
 		return 0;
 	else
 		return aux->freq;
-}
-*/
-
-
-/*
-freq *getFromIndex(freq *lista, int i)
-{
-	freq *aux = lista;
-	while (aux != NULL && i > 0)
-	{
-		aux = aux->prox;
-		i--;
-	}
-	if (aux == NULL)
-		return NULL;
-	else
-		return aux;
 }
 */
