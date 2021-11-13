@@ -11,7 +11,6 @@ typedef struct huffman
 
 typedef struct floresta
 {
-	//struct floresta *ant;
 	NoHuff *arv;
 	struct floresta *prox;
 } NoF;
@@ -26,8 +25,8 @@ NoHuff *criaNoHuff(NoHuff *esq, int freq, int index, NoHuff *dir)
 	return novoNoHuff;
 }
 
-
-//Ordem Crescente
+//Ordem do Silvio Decrescente remove do TL (fim)
+//Ordem Crescente remove do Inicio (Cabeca de lista)
 void insereFloresta(struct floresta **f, NoHuff *novoNoHuff)
 {
 	NoF *novoNoF = malloc(sizeof(NoF));
@@ -74,18 +73,16 @@ NoHuff *removeFloresta(struct floresta **f)
 }
 
 ////////OK
-struct huffman *criaHuff(char frase[] /*, parametro da tabela de frequencia*/)
+struct huffman *criaHuff(char frase[], struct tabela_frequencia **tabela)
 {
 	struct floresta *f = NULL;
-	struct tabela_frequencia *l = listaFreq(frase); //substituir por parametro
+	*tabela = listaFreq(frase);
 
-	//NoHuff *criaNoHuff(NoHuff *esq, int freq, int index, NoHuff *dir)
-	//void insereFloresta(struct floresta **f, NoHuff *novoNoHuff)
-	for (Tupla *auxTupla = l; auxTupla != NULL; auxTupla = auxTupla->prox)
-		insereFloresta(&f, criaNoHuff(NULL, auxTupla->freq, getIndex(l, auxTupla->palavra), NULL));
+	for (Tupla *auxTupla = *tabela; auxTupla != NULL; auxTupla = auxTupla->prox)
+		insereFloresta(&f, criaNoHuff(NULL, auxTupla->freq, getIndex(*tabela, auxTupla->palavra), NULL));
 
-	NoHuff *esq;
-	NoHuff *dir;
+	NoHuff *esq = NULL;
+	NoHuff *dir = NULL;
 
 	while (f->prox != NULL)
 	{
@@ -96,45 +93,42 @@ struct huffman *criaHuff(char frase[] /*, parametro da tabela de frequencia*/)
 	return f->arv;
 }
 
-void geraCodigo()
-{
-	
-}
+
 
 //Funcao que cria prefixos das palavras e atribui ao campo prefixo[] da tabela de frequencia  l passado por parametro
-void insereCodigo(struct huffman *raiz, struct tabela_frequencia *l, int t, char cod[], int index, Tupla *auxTupla)
+void insereCodigo(struct huffman *raiz, struct tabela_frequencia *tabela, int t, char cod[], int index, Tupla *auxTupla)
 {
 	if (raiz != NULL)
 	{
 		if (raiz->esq == NULL && raiz->dir == NULL)
 		{
-			index = getIndex(l, l->palavra);
-			auxTupla = getFromIndex(l, index);
-			strcpy(auxTupla->prefixo, cod);
-			sprintf(auxTupla->prefixo, "%.*s", t + 1, d);
+			auxTupla = getFromIndex(tabela, raiz->index);
+			sprintf(auxTupla->prefixo, "%.*s", t + 1, cod);
 		}
 		else
 		{
 			//verificar ordem dos bits
 			t++;
-			cod[t] = '1';	insereCodigos(raiz->esq, l, t, cod, index, auxTupla);
-			cod[t] = '0'; 	insereCodigos(raiz->dir, l, t, cod, index, auxTupla);
+			cod[t] = '0'; insereCodigo(raiz->esq, tabela, t, cod, index, auxTupla);
+			cod[t] = '1'; insereCodigo(raiz->dir, tabela, t, cod, index, auxTupla);
 			t--;
 		}
 	}
 }
 
-/*
-void comprimir(char *frase, no *arv)
+void geraCodigo(struct huffman *raiz, struct tabela_frequencia *tabela)
 {
-	char *tabela[256];
-	int tam = 0;
-	freq *l = listaFreq(frase);
-	insereCodigos(arv, tabela, &tam, l);
-	printf("\nTabela de Huffman:\n");
-	for (int i = 0; i < tam; i++)
+	char buffstring[50];
+	insereCodigo(raiz, tabela, -1, buffstring, 0, NULL);
+}
+
+void destroiHuffman(struct huffman **raiz)
+{
+	if (*raiz != NULL)
 	{
-		printf("%s: %s\n", tabela[i], getFromIndex(listaFreq(frase), i)->palavra);
+		destroiHuffman(&(*raiz)->esq);
+		destroiHuffman(&(*raiz)->dir);
+		free(*raiz);
+		*raiz = NULL;
 	}
 }
-*/

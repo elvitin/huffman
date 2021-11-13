@@ -2,7 +2,7 @@ typedef struct tabela_frequencia
 {
 	char palavra[50];
 	int freq;
-	char prefixo[30];
+	char prefixo[50]; //Ou codigo
 	struct tabela_frequencia *prox;
 
 } Tupla;
@@ -17,7 +17,6 @@ Tupla *criaTuplaFreq(char *p)
 	return novaTupla;
 }
 
-
 ////////OK
 struct tabela_frequencia *listaFreq(char frase[])
 {
@@ -30,7 +29,7 @@ struct tabela_frequencia *listaFreq(char frase[])
 	while (p != NULL)
 	{
 		p = strtok(NULL, " ");
-		
+
 		if (p != NULL)
 		{
 			aux = cabeca;
@@ -65,33 +64,44 @@ int getIndex(struct tabela_frequencia *lista, char p[])
 	return i;
 }
 
-
-
 Tupla *getFromIndex(struct tabela_frequencia *lista, int i)
 {
-	Tupla *aux = lista;
-	while (aux != NULL && i > 0)
+	Tupla *auxTupla = lista;
+	while (auxTupla != NULL && i > 0)
 	{
-		aux = aux->prox;
+		auxTupla = auxTupla->prox;
 		i--;
 	}
-	
-	if (aux == NULL)
+
+	if (auxTupla == NULL)
 		return NULL;
-	return aux;
+	return auxTupla;
 }
 
-
-
-/*
-int getFreq(freq *lista, char *p)
+Tupla *getFromPalavra(Tupla *tabela, char p[])
 {
-	freq *aux = lista;
-	while (aux != NULL && strcmp(p, aux->palavra))
-		aux = aux->prox;
-	if (aux == NULL)
-		return 0;
-	else
-		return aux->freq;
+	Tupla *auxTupla = tabela;
+	while (auxTupla != NULL && strcmp(p, auxTupla->palavra))
+		auxTupla = auxTupla->prox;
+
+	return auxTupla;
 }
-*/
+
+void exibeTabela(struct tabela_frequencia *tabela)
+{
+	while (tabela != NULL)
+	{
+		printf("[%s]\t\t[%d]\t\t[%s]\n", tabela->palavra, tabela->freq, tabela->prefixo);
+		tabela = tabela->prox;
+	}
+}
+
+void destroiTabela(struct tabela_frequencia **tabela)
+{
+	if (*tabela != NULL)
+	{
+		destroiTabela(&(*tabela)->prox);
+		free(*tabela);
+		*tabela = NULL;
+	}
+}
