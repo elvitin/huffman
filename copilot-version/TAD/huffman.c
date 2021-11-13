@@ -96,20 +96,30 @@ struct huffman *criaHuff(char frase[] /*, parametro da tabela de frequencia*/)
 	return f->arv;
 }
 
+void geraCodigo()
+{
+	
+}
 
 //Funcao que cria prefixos das palavras e atribui ao campo prefixo[] da tabela de frequencia  l passado por parametro
-void insereCodigos(struct huffman *raiz, struct tabela_frequencia *l, int t)
+void insereCodigo(struct huffman *raiz, struct tabela_frequencia *l, int t, char cod[], int index, Tupla *auxTupla)
 {
 	if (raiz != NULL)
 	{
 		if (raiz->esq == NULL && raiz->dir == NULL)
 		{
-			
+			index = getIndex(l, l->palavra);
+			auxTupla = getFromIndex(l, index);
+			strcpy(auxTupla->prefixo, cod);
+			sprintf(auxTupla->prefixo, "%.*s", t + 1, d);
 		}
 		else
 		{
-			insereCodigos(raiz->esq, l, t);
-			insereCodigos(raiz->dir, l, t);
+			//verificar ordem dos bits
+			t++;
+			cod[t] = '1';	insereCodigos(raiz->esq, l, t, cod, index, auxTupla);
+			cod[t] = '0'; 	insereCodigos(raiz->dir, l, t, cod, index, auxTupla);
+			t--;
 		}
 	}
 }
