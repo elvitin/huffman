@@ -28,11 +28,11 @@ struct tabela_frequencia *criaTabelaFreq(char frase[])
 	while (p != NULL)
 	{
 		p = strtok(NULL, " ");
-
+		
 		if (p != NULL)
 		{
 			aux = cabeca;
-			while (aux != NULL && strcmp(p, aux->palavra))
+			while (aux != NULL && strcasecmp(p, aux->palavra))
 				aux = aux->prox;
 
 			if (aux == NULL)
@@ -52,7 +52,7 @@ int getIndex(struct tabela_frequencia *lista, char p[])
 	Tupla *auxTupla = lista;
 
 	int i = 0;
-	while (auxTupla != NULL && strcmp(p, auxTupla->palavra))
+	while (auxTupla != NULL && strcasecmp(p, auxTupla->palavra))
 	{
 		auxTupla = auxTupla->prox;
 		i++;
@@ -80,19 +80,23 @@ Tupla *getFromIndex(struct tabela_frequencia *lista, int i)
 Tupla *getFromPalavra(Tupla *tabela, char p[])
 {
 	Tupla *auxTupla = tabela;
-	while (auxTupla != NULL && strcmp(p, auxTupla->palavra))
+	while (auxTupla != NULL && strcasecmp(p, auxTupla->palavra))
 		auxTupla = auxTupla->prox;
 
 	return auxTupla;
 }
 
 void exibeTabela(struct tabela_frequencia *tabela)
-{
+{	
+	puts("\n================================================");
+	puts("[Palavra]\t[Frequencia]\t[Codigo/Prefixo]");
+	puts("================================================");
 	while (tabela != NULL)
 	{
-		printf("[%s]\t\t[%d]\t\t[%s]\n", tabela->palavra, tabela->freq, tabela->prefixo);
+		printf(" %-16s%-16d%s\n", tabela->palavra, tabela->freq, tabela->prefixo);
 		tabela = tabela->prox;
 	}
+	putchar('\n');
 }
 
 void destroiTabela(struct tabela_frequencia **tabela)

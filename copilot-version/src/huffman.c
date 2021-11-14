@@ -25,7 +25,6 @@ NoHuff *criaNoHuff(NoHuff *esq, int freq, int index, NoHuff *dir)
 	return novoNoHuff;
 }
 
-//Ordem do Silvio Decrescente remove do TL (fim)
 //Ordem Crescente remove do Inicio (Cabeca de lista)
 void insereFloresta(struct floresta **f, NoHuff *novoNoHuff)
 {
@@ -123,7 +122,7 @@ struct huffman *criaHuffTabela(struct tabela_frequencia *tabela)
 }
 
 
-//Funcao que cria prefixos das palavras e atribui ao campo prefixo[] da tabela de frequencia  l passado por parametro
+//Funcao que cria prefixos das palavras e atribui ao campo prefixo[] da tabela de frequencia tabela passado por parametro
 void insereCodigo(struct huffman *raiz, struct tabela_frequencia *tabela, int t, char cod[], int index, Tupla *auxTupla)
 {
 	if (raiz != NULL)
@@ -135,7 +134,6 @@ void insereCodigo(struct huffman *raiz, struct tabela_frequencia *tabela, int t,
 		}
 		else
 		{
-			//verificar ordem dos bits
 			t++;
 			cod[t] = '0'; insereCodigo(raiz->esq, tabela, t, cod, index, auxTupla);
 			cod[t] = '1'; insereCodigo(raiz->dir, tabela, t, cod, index, auxTupla);

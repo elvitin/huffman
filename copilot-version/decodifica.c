@@ -8,7 +8,7 @@
 void decodificar (struct huffman *A, struct tabela_frequencia *tabela, FILE *arq_cod)
 {
 	char c;
-	char frase[512] = "";
+	char frase[3500] = "";
 	NoHuff *auxNoHuff = A;
 	Tupla *auxTupla;
 
@@ -47,7 +47,6 @@ int main(void)
 			struct huffman *Arvh;
 			struct tabela_frequencia *tabela = NULL;
 			
-			//////Recriando a tabela de frequencias
 			fread(&auxRegTupla, sizeof(Tupla), 1, key);
 
 			while (!feof(key))
@@ -69,7 +68,6 @@ int main(void)
 				}
 				fread(&auxRegTupla, sizeof(Tupla), 1, key);
 			}
-			//////////////////////////////////////////
 
 			Arvh = criaHuffTabela(tabela);
 			decodificar(Arvh, tabela, arq_cod);
@@ -80,12 +78,12 @@ int main(void)
 			fclose(arq_cod);
 		}
 		else
-			perror("Erro (ArqTxt):");
+			perror("Erro (ArqTxt)");
 
 		fclose(key);
 	}
 	else
-		perror("Erro (ArqBin):");
+		perror("Erro (ArqBin)");
 
 	return 0;
 }
