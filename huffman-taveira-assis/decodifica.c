@@ -2,8 +2,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "src/huffman.c"
+#ifdef __linux__
+	#include "src/getchForLinux.h"
+#else
+	#include <conio.h>
+#endif
 
+#include "src/huffman.c"
 
 void decodificar (struct huffman *A, struct tabela_frequencia *tabela, FILE *arq_cod)
 {
@@ -84,6 +89,7 @@ int main(void)
 	}
 	else
 		perror("Erro (ArqBin)");
-
+		
+	getche();
 	return 0;
 }

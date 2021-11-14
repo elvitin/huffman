@@ -103,6 +103,7 @@ int main(void)
 	}
 	else
 		perror("Erro (ArqBin)");
-
+		
+	getche();
 	return 0;
 }
