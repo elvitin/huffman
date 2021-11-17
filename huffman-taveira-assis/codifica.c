@@ -23,77 +23,89 @@ void replace(char *string, char *characters)
 
 void lower_string(char s[])
 {
-   int c = 0;
-   
-   while (s[c] != '\0')
-   {
-      if (s[c] >= 'A' && s[c] <= 'Z') {
-         s[c] = s[c] + 32;
-      }
-      c++;
-   }
+	int c = 0;
+
+	while (s[c] != '\0')
+	{
+		if (s[c] >= 'A' && s[c] <= 'Z')
+		{
+			s[c] = s[c] + 32;
+		}
+		c++;
+	}
+}
+
+void exibe(struct tabela_frequencia *tabela)
+{
+	if(*tabela->prefixo != '\0')
+		printf("Exibe tabela de frequencia (Com prefixos) ? <S/N>: ");
+	else
+		printf("Exibe tabela de frequencia (Sem prefixos) ? <S/N>: ");
+
+	if (toupper(getche()) == 'S')
+	{
+		putchar('\n');
+		exibeTabela(tabela);
+	}
+	putchar('\n');
+}
+
+//Codifica usando a tabela e gravando em arq_cod
+void codificar(char *palavras, struct tabela_frequencia *tabela, FILE *arq_cod)
+{
+	Tupla *auxTupla;
+	char codigo_binario[1000] = "";
+
+	char *palavra = strtok(palavras, " ");
+	while (palavra != NULL)
+	{
+		auxTupla = getFromPalavra(tabela, palavra);
+		if (auxTupla != NULL)
+			strcat(codigo_binario, auxTupla->prefixo);
+
+		palavra = strtok(NULL, " ");
+	}
+	fputs(codigo_binario, arq_cod);
+}
+
+void gravaTabela(struct tabela_frequencia *tabela, FILE *key)
+{
+	for (Tupla *auxTupla = tabela; auxTupla != NULL; auxTupla = auxTupla->prox)
+		fwrite(auxTupla, sizeof(Tupla), 1, key);
 }
 
 int main(void)
 {
-	FILE *key = fopen("chave_decodificacao.bin", "wb");
+	FILE *key = fopen("arquivos_gerados/chave_decodificacao.bin", "wb");
 	if (key != NULL)
 	{
-		FILE *arq_cod = fopen("arquivo_codificado.txt", "w");
+		FILE *arq_cod = fopen("arquivos_gerados/arquivo_codificado.txt", "w");
 		if (arq_cod != NULL)
 		{
+			struct huffman *Arvh;
+			struct tabela_frequencia *tabela;
+
 			char frase[] = {"Amo como ama o amor. Nao conheco nenhuma outra razao para amar senao amar. Que queres que te diga, alem de que te amo, se o que quero dizer-te e que te amo?"};
-			char codigo_binario[400] = "";
-			char simbolos[] = ".,?";
 			char frase_backup[strlen(frase)];
-			lower_string(frase);
+			char simbolos[] = ".,?";
+
 			replace(frase, simbolos);
+			lower_string(frase);
 			strcpy(frase_backup, frase);
 
-			Tupla *auxTupla = NULL;
+			Arvh = criaHuff(frase, &tabela);
+			exibe(tabela);
 
-			struct tabela_frequencia *tabela = NULL;
-			struct huffman *Arvh = criaHuff(frase, &tabela);
+			geraCodigo(Arvh, tabela); //Gera prefixos e atualiza a tabela
+			exibe(tabela);
 
-			printf("Exibe tabela de frequencia (Sem prefixos) ? <S/N>: ");
-			if(toupper(getche()) == 'S')
-			{
-				putchar('\n');
-				exibeTabela(tabela);
-			}
-			putchar('\n');
-				
+			codificar(frase_backup, tabela, arq_cod);
 
-			//Gera prefixos e atualiza a tabela
-			geraCodigo(Arvh, tabela);
-
-			printf("Exibe tabela de frequencia (Com prefixos) ? <S/N>: ");
-			
-			if(toupper(getche()) == 'S')
-			{
-				putchar('\n');
-				exibeTabela(tabela);
-			}				
-			putchar('\n');	
-
-			
-			char *palavra = strtok(frase_backup, " ");
-			while (palavra != NULL)
-			{
-				auxTupla = getFromPalavra(tabela, palavra);
-				if(auxTupla != NULL)
-					strcat(codigo_binario, auxTupla->prefixo);
-				
-				palavra = strtok(NULL, " ");
-			}
-
-			fputs(codigo_binario, arq_cod);
-
-			for(auxTupla = tabela; auxTupla != NULL; auxTupla = auxTupla->prox)
-				fwrite(auxTupla, sizeof(Tupla), 1, key);
+			gravaTabela(tabela, key);
 
 			destroiTabela(&tabela);
 			destroiHuffman(&Arvh);
+
 			fclose(arq_cod);
 		}
 		else
@@ -103,7 +115,7 @@ int main(void)
 	}
 	else
 		perror("Erro (ArqBin)");
-		
-	getche();
+
+	getch();
 	return 0;
 }

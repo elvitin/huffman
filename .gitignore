@@ -7,3 +7,6 @@ copilot-version/chave_decodificacao.bin
 copilot-version/codifica.exe
 copilot-version/arquivo_codificado.txt
 huffman-taveira-assis.zip
+huffman-taveira-assis/chave_decodificacao.bin
+huffman-taveira-assis/arquivo_codificado.txt
+huffman-taveira-assis/codifica.exe

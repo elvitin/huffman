@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include "src/huffman.c"
 
 #ifdef __linux__
 	#include "src/getchForLinux.h"
@@ -8,9 +10,23 @@
 	#include <conio.h>
 #endif
 
-#include "src/huffman.c"
 
-void decodificar (struct huffman *A, struct tabela_frequencia *tabela, FILE *arq_cod)
+void exibe(struct tabela_frequencia *tabela)
+{
+	if(*tabela->prefixo != '\0')
+		printf("Exibe tabela de frequencia (Com prefixos) ? <S/N>: ");
+	else
+		printf("Exibe tabela de frequencia (Sem prefixos) ? <S/N>: ");
+
+	if (toupper(getche()) == 'S')
+	{
+		putchar('\n');
+		exibeTabela(tabela);
+	}
+	putchar('\n');
+}
+
+void decodificar(struct huffman *A, struct tabela_frequencia *tabela, FILE *arq_cod)
 {
 	char c;
 	char frase[3500] = "";
@@ -38,41 +54,55 @@ void decodificar (struct huffman *A, struct tabela_frequencia *tabela, FILE *arq
 	puts(frase);
 }
 
+struct tabela_frequencia *carregaTabela(FILE *key)
+{
+	struct tabela_frequencia *tabela;
+
+	Tupla auxRegTupla;
+	Tupla *auxPonteiroTupla;
+	Tupla *ultimo;
+
+	fread(&auxRegTupla, sizeof(Tupla), 1, key);
+
+	while (!feof(key))
+	{
+		auxPonteiroTupla = malloc(sizeof(Tupla));
+
+		strcpy(auxPonteiroTupla->palavra, auxRegTupla.palavra);
+		auxPonteiroTupla->freq = auxRegTupla.freq;
+		strcpy(auxPonteiroTupla->prefixo, auxRegTupla.prefixo);
+		auxPonteiroTupla->prox = NULL;
+
+		if (tabela == NULL)
+		{
+			tabela = auxPonteiroTupla;
+			ultimo = auxPonteiroTupla;
+		}
+		else
+		{
+			ultimo->prox = auxPonteiroTupla;
+			ultimo = ultimo->prox;
+		}
+
+		fread(&auxRegTupla, sizeof(Tupla), 1, key);
+	}
+
+	return tabela;
+}
+
 int main(void)
 {
-	FILE *key = fopen("chave_decodificacao.bin", "rb");
+	FILE *key = fopen("arquivos_gerados/chave_decodificacao.bin", "rb");
 	if (key != NULL)
 	{
-		FILE *arq_cod = fopen("arquivo_codificado.txt", "r");
+		FILE *arq_cod = fopen("arquivos_gerados/arquivo_codificado.txt", "r");
 		if (arq_cod != NULL)
 		{
-			Tupla auxRegTupla;
-			Tupla *auxPonteiroTupla;
-			Tupla *ultimo;
 			struct huffman *Arvh;
-			struct tabela_frequencia *tabela = NULL;
-			
-			fread(&auxRegTupla, sizeof(Tupla), 1, key);
+			struct tabela_frequencia *tabela;
 
-			while (!feof(key))
-			{
-				auxPonteiroTupla = malloc(sizeof(Tupla));
-
-				strcpy(auxPonteiroTupla->palavra, auxRegTupla.palavra);
-				auxPonteiroTupla->freq = auxRegTupla.freq;
-				strcpy(auxPonteiroTupla->prefixo, auxRegTupla.prefixo);
-				auxPonteiroTupla->prox = NULL;
-
-				if (tabela == NULL) {
-					tabela = auxPonteiroTupla;
-					ultimo = auxPonteiroTupla;
-				}
-				else {
-					ultimo->prox = auxPonteiroTupla;
-					ultimo = ultimo->prox;
-				}
-				fread(&auxRegTupla, sizeof(Tupla), 1, key);
-			}
+			tabela = carregaTabela(key);
+			exibe(tabela);
 
 			Arvh = criaHuffTabela(tabela);
 			decodificar(Arvh, tabela, arq_cod);
@@ -89,7 +119,7 @@ int main(void)
 	}
 	else
 		perror("Erro (ArqBin)");
-		
-	getche();
+
+	getch();
 	return 0;
 }

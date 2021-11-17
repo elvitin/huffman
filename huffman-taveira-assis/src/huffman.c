@@ -135,8 +135,10 @@ void insereCodigo(struct huffman *raiz, struct tabela_frequencia *tabela, int t,
 		else
 		{
 			t++;
-			cod[t] = '0'; insereCodigo(raiz->esq, tabela, t, cod, index, auxTupla);
-			cod[t] = '1'; insereCodigo(raiz->dir, tabela, t, cod, index, auxTupla);
+			cod[t] = '0'; 
+			insereCodigo(raiz->esq, tabela, t, cod, index, auxTupla);
+			cod[t] = '1'; 
+			insereCodigo(raiz->dir, tabela, t, cod, index, auxTupla);
 			t--;
 		}
 	}
