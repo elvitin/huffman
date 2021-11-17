@@ -74,6 +74,25 @@ void gravaTabela(struct tabela_frequencia *tabela, FILE *key)
 		fwrite(auxTupla, sizeof(Tupla), 1, key);
 }
 
+void remove_simbolos(char *frase)
+{
+	printf("Remover simbolos ? <S/N>: ");
+	if (toupper(getche()) == 'S')
+	{
+		char simbolos[] = ".,?";
+		replace(frase, simbolos);
+	}
+	putchar('\n');
+}
+
+void transforma_minuscula(char *frase)
+{
+	printf("Transforma minuscula ? <S/N>: ");
+	if (toupper(getche()) == 'S')
+		lower_string(frase);
+	putchar('\n');
+}
+
 int main(void)
 {
 	FILE *key = fopen("arquivos_gerados/chave_decodificacao.bin", "wb");
@@ -87,10 +106,10 @@ int main(void)
 
 			char frase[] = {"Amo como ama o amor. Nao conheco nenhuma outra razao para amar senao amar. Que queres que te diga, alem de que te amo, se o que quero dizer-te e que te amo?"};
 			char frase_backup[strlen(frase)];
-			char simbolos[] = ".,?";
+			
+			remove_simbolos(frase);
+			transforma_minuscula(frase);
 
-			replace(frase, simbolos);
-			lower_string(frase);
 			strcpy(frase_backup, frase);
 
 			Arvh = criaHuff(frase, &tabela);

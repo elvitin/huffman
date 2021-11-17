@@ -32,7 +32,7 @@ struct tabela_frequencia *criaTabelaFreq(char frase[])
 		if (p != NULL)
 		{
 			aux = cabeca;
-			while (aux != NULL && strcasecmp(p, aux->palavra))
+			while (aux != NULL && strcmp(p, aux->palavra))
 				aux = aux->prox;
 
 			if (aux == NULL)
@@ -52,7 +52,7 @@ int getIndex(struct tabela_frequencia *lista, char p[])
 	Tupla *auxTupla = lista;
 
 	int i = 0;
-	while (auxTupla != NULL && strcasecmp(p, auxTupla->palavra))
+	while (auxTupla != NULL && strcmp(p, auxTupla->palavra))
 	{
 		auxTupla = auxTupla->prox;
 		i++;
@@ -80,7 +80,7 @@ Tupla *getFromIndex(struct tabela_frequencia *lista, int i)
 Tupla *getFromPalavra(Tupla *tabela, char p[])
 {
 	Tupla *auxTupla = tabela;
-	while (auxTupla != NULL && strcasecmp(p, auxTupla->palavra))
+	while (auxTupla != NULL && strcmp(p, auxTupla->palavra))
 		auxTupla = auxTupla->prox;
 
 	return auxTupla;
